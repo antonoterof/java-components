@@ -30,8 +30,6 @@ public class GatewayDeviceApp
 	
 	public static final long DEFAULT_TEST_RUNTIME = 60000L;
 	
-	// private var's
-	private SystemPerformanceManager sysPerfMgr = null;
 	private DeviceDataManager dataMgr = null;
 
 	// constructors
@@ -47,7 +45,6 @@ public class GatewayDeviceApp
 		
 		_Logger.info("Initializing GDA...");
 		
-		this.sysPerfMgr = new SystemPerformanceManager();
 		parseArgs(args); // Duda
 	}
 	

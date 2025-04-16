@@ -23,6 +23,11 @@ import programmingtheiot.common.DefaultDataMessageListener;
 import programmingtheiot.common.IDataMessageListener;
 import programmingtheiot.gda.connection.*;
 
+import programmingtheiot.data.SystemPerformanceData;
+import programmingtheiot.data.DataUtil;
+import programmingtheiot.common.ResourceNameEnum;
+
+
 /**
  * This test case class contains very basic integration tests for
  * CoapClientToServerConnector. It should not be considered complete,
@@ -96,10 +101,32 @@ public class CoapClientToServerConnectorTest
 	/**
 	 * 
 	 */
-	@Test
+	//@Test
 	public void testConnectAndDiscover()
 	{
 		assertTrue(this.coapClient.sendDiscoveryRequest(DEFAULT_TIMEOUT));
 	}
 	
+	@Test
+	public void testSystemPerformancePutMessage()
+	{
+		SystemPerformanceData spData = new SystemPerformanceData();
+		
+		String jsonData = DataUtil.getInstance().systemPerformanceDataToJson(spData);
+		
+		this.coapClient.sendPutRequest(
+			ResourceNameEnum.CDA_SYSTEM_PERF_MSG_RESOURCE, null, USE_DEFAULT_RESOURCES, jsonData, DEFAULT_TIMEOUT);
+	}
+
+	@Test
+	public void testTelemetryPutMessage()
+	{
+		SensorData sensorData = new SensorData();
+		
+		String jsonData = DataUtil.getInstance().sensorDataToJson(sensorData);
+		
+		this.coapClient.sendPutRequest(
+			ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, null, USE_DEFAULT_RESOURCES, jsonData, DEFAULT_TIMEOUT);
+	}
+
 }

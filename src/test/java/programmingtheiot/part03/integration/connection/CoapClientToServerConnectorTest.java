@@ -12,6 +12,8 @@ package programmingtheiot.part03.integration.connection;
 import static org.junit.Assert.*;
 
 import java.util.logging.Logger;
+import java.util.Set;
+
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,6 +28,13 @@ import programmingtheiot.gda.connection.*;
 import programmingtheiot.data.SystemPerformanceData;
 import programmingtheiot.data.DataUtil;
 import programmingtheiot.common.ResourceNameEnum;
+import programmingtheiot.data.SensorData;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.WebLink;
+
+
+
+
 
 
 /**
@@ -127,6 +136,33 @@ public class CoapClientToServerConnectorTest
 		
 		this.coapClient.sendPutRequest(
 			ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, null, USE_DEFAULT_RESOURCES, jsonData, DEFAULT_TIMEOUT);
+	}
+
+	@Test
+	public void testRunSimpleCoapServerGatewayIntegration()
+	{
+		try {
+			String url = "coap://localhost:5683";
+			
+			this.csg = new CoapServerGateway(new DefaultDataMessageListener());
+			this.csg.startServer();
+			
+			CoapClient clientConn = new CoapClient(url);
+			
+			Set<WebLink> wlSet = clientConn.discover();
+				
+			if (wlSet != null) {
+				for (WebLink wl : wlSet) {
+					_Logger.info(" --> WebLink: " + wl.getURI() + ". Attributes: " + wl.getAttributes());
+				}
+			}
+			
+			Thread.sleep(DEFAULT_TIMEOUT); // DEFAULT_TIMEOUT is in milliseconds - for instance, 120000 (2 minutes)
+			
+			this.csg.stopServer();
+		} catch (Exception e) {
+			// log a message!
+		}
 	}
 
 }

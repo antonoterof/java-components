@@ -144,8 +144,8 @@ public class CoapClientToServerConnectorTest
 		try {
 			String url = "coap://localhost:5683";
 			
-			this.csg = new CoapServerGateway(new DefaultDataMessageListener());
-			this.csg.startServer();
+			_ServerGateway = new CoapServerGateway(new DefaultDataMessageListener());
+			_ServerGateway.startServer();
 			
 			CoapClient clientConn = new CoapClient(url);
 			
@@ -159,7 +159,7 @@ public class CoapClientToServerConnectorTest
 			
 			Thread.sleep(DEFAULT_TIMEOUT); // DEFAULT_TIMEOUT is in milliseconds - for instance, 120000 (2 minutes)
 			
-			this.csg.stopServer();
+			_ServerGateway.stopServer();
 		} catch (Exception e) {
 			// log a message!
 		}

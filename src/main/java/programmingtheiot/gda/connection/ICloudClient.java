@@ -45,7 +45,6 @@ public interface ICloudClient
 	 * @return bool True on success, False otherwise.
 	 */
 	public boolean sendEdgeDataToCloud(ResourceNameEnum resource, SensorData data);
-
 	/**
 	 * Attempts to send the given data instance to the remote cloud service.
 	 * This will default to the pre-configured QoS level set in the configuration

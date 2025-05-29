@@ -26,6 +26,7 @@ import programmingtheiot.common.ResourceNameEnum;
 import programmingtheiot.gda.connection.handlers.GetActuatorCommandResourceHandler;
 import programmingtheiot.gda.connection.handlers.UpdateSystemPerformanceResourceHandler;
 import programmingtheiot.gda.connection.handlers.UpdateTelemetryResourceHandler;
+import org.eclipse.californium.elements.config.Configuration;
 
 
 /**
@@ -177,13 +178,16 @@ public class CoapServerGateway
 	{
 		return null;
 	}
-	
-	private void initServer(ResourceNameEnum ...resources)
-	{
-		this.coapServer = new CoapServer();
-		
-		initDefaultResources();
-	}
+
+	private void initServer()
+    {
+
+        Configuration configuration = Configuration.createStandardWithoutFile();
+
+        this.coapServer = new CoapServer(configuration);
+        
+        initDefaultResources();
+    }
 
 	private void initDefaultResources()
 	{

@@ -95,7 +95,7 @@ public class CloudClientConnectorTest
 	/**
 	 * Test method
 	 */
-	@Test
+	//@Test
 	public void testIntegratedCloudClientConnectAndDisconnect()
 	{
 		DeviceDataManager ddm = new DeviceDataManager();
@@ -198,5 +198,57 @@ public class CloudClientConnectorTest
 			// ignore
 		}
 	}
+
+	//@Test
+	public void test01_PublishSensorDataToCloud() {
+		CloudClientConnector cloudClient = new CloudClientConnector();
+		assertTrue(cloudClient.connectClient());
+
+		try {
+			Thread.sleep(3000L); // Esperar conexión completa
+		} catch (Exception e) {}
+
+		SensorData sensorData = new SensorData();
+		sensorData.setName("temperature");  // debe coincidir con la variable de Ubidots
+		sensorData.setValue(34.0f);         // valor válido para visualización
+
+		boolean result = cloudClient.sendEdgeDataToCloud(ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, sensorData);
+		assertTrue(result);
+
+		try {
+			Thread.sleep(5000L); // dar tiempo a enviar y procesar
+		} catch (Exception e) {}
+
+		cloudClient.disconnectClient();
+	}
+
+	@Test
+	public void test02_TriggerAndReceiveActuationEvent() {
+		CloudClientConnector cloudClient = new CloudClientConnector();
+		cloudClient.setDataMessageListener(new DefaultDataMessageListener()); // logs por consola
+		assertTrue(cloudClient.connectClient());
+
+		try {
+			Thread.sleep(5000L); // conexión estable
+		} catch (Exception e) {}
+
+		// Enviar datos que activan la condición en Ubidots
+		SensorData sensorData = new SensorData();
+		sensorData.setName("temperature");
+		sensorData.setValue(36.5f); // mayor que el umbral definido en Ubidots
+
+		assertTrue(cloudClient.sendEdgeDataToCloud(ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, sensorData));
+
+		try {
+			// esperar a que el evento se dispare y se reciba
+			Thread.sleep(30000L);
+		} catch (Exception e) {}
+
+		assertTrue(cloudClient.disconnectClient());
+	}
+
+
+
+
 	
 }

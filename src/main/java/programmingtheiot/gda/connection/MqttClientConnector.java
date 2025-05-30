@@ -299,38 +299,26 @@ public class MqttClientConnector implements IPubSubClient, MqttCallbackExtended
 	// callbacks
 	
 	@Override
-	public void connectComplete(boolean reconnect, String serverURI) {
+	public void connectComplete(boolean reconnect, String serverURI)
+	{
 		_Logger.info("MQTT connection successful (is reconnect = " + reconnect + "). Broker: " + serverURI);
 
 		int qos = 1;
 
-		// Option 2
 		try {
-			if (!this.useCloudGatewayConfig) {
+			if (! this.useCloudGatewayConfig) {
 				_Logger.info("Subscribing to topic: " + ResourceNameEnum.CDA_ACTUATOR_RESPONSE_RESOURCE.getResourceName());
 
 				this.mqttClient.subscribe(
 					ResourceNameEnum.CDA_ACTUATOR_RESPONSE_RESOURCE.getResourceName(),
 					qos,
-					new ActuatorResponseMessageListener(
-						ResourceNameEnum.CDA_ACTUATOR_RESPONSE_RESOURCE,
-						this.dataMsgListener
-					)
-				);
-
-				// IMPORTANT NOTE: You'll have to create a `subscribe()` call that delegates
-				// incoming SensorData and SystemPerformanceData messages using your newly
-				// created SensorDataMessageListener and SystemPerformanceDataMessageListener
-				// class instances
+					new ActuatorResponseMessageListener(ResourceNameEnum.CDA_ACTUATOR_RESPONSE_RESOURCE, this.dataMsgListener));
 			}
 		} catch (MqttException e) {
 			_Logger.warning("Failed to subscribe to CDA actuator response topic.");
 		}
 
-		// This call enables the MqttClientConnector to notify another listener
-		// about the connection now being complete. This will be important for
-		// the CloudClientConnector implementation, as it needs to know when
-		// this client is finally connected with the cloud-hosted MQTT broker.
+		// This is the new addition - a call to this.connListener.onConnect()
 		if (this.connListener != null) {
 			this.connListener.onConnect();
 		}
